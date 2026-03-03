@@ -1,0 +1,1 @@
+"""RSS feed fetcher and formatter (stdlib only: urllib + xml.etree)."""
