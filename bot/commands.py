@@ -26,11 +26,11 @@ def set_storage(storage: Storage) -> None:
     _storage = storage
 
 HELP_TEXT = (
-    "qq-news-bot commands:\n"
-    "/help -- show this message\n"
-    "/news -- latest news from RSS sources\n"
-    "/subscribe -- enable daily digest for this group\n"
-    "/unsubscribe -- disable daily digest for this group"
+    "\U0001f916 qq-news-bot 指令：\n"
+    "/help \u2014 显示本帮助\n"
+    "/news \u2014 获取最新新闻\n"
+    "/subscribe \u2014 开启每日推送\n"
+    "/unsubscribe \u2014 关闭每日推送"
 )
 
 
@@ -61,7 +61,7 @@ def _handle_news(group_id: int) -> str:
     key = f"news:{group_id}"
     if not _news_limiter.check(key):
         secs = _news_limiter.remaining(key)
-        return f"Rate limited. Try again in {secs}s."
+        return f"\u23f3 冷却中，{secs}秒后再试。"
     items = fetch_all()
     return format_news(items)
 
@@ -69,12 +69,12 @@ def _handle_news(group_id: int) -> str:
 def _handle_subscribe(group_id: int) -> str:
     store = get_storage()
     if store.subscribe(group_id):
-        return "Subscribed. This group will receive daily news digests."
-    return "This group is already subscribed."
+        return "\u2705 已订阅，本群将收到每日新闻推送。"
+    return "\u2139\ufe0f 本群已经订阅过了。"
 
 
 def _handle_unsubscribe(group_id: int) -> str:
     store = get_storage()
     if store.unsubscribe(group_id):
-        return "Unsubscribed. Daily digest disabled for this group."
-    return "This group is not subscribed."
+        return "\U0001f6d1 已取消订阅，不再推送每日新闻。"
+    return "\u2139\ufe0f 本群未订阅。"

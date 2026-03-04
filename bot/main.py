@@ -1,8 +1,23 @@
 """CLI entry point and top-level orchestration."""
 
 import argparse
+import io
 import os
 import sys
+
+
+def _fix_stdout_encoding() -> None:
+    """Ensure stdout/stderr can handle UTF-8 (needed on Windows with GBK)."""
+    if sys.stdout.encoding and sys.stdout.encoding.lower().replace("-", "") != "utf8":
+        sys.stdout = io.TextIOWrapper(
+            sys.stdout.buffer, encoding="utf-8", errors="replace"
+        )
+        sys.stderr = io.TextIOWrapper(
+            sys.stderr.buffer, encoding="utf-8", errors="replace"
+        )
+
+
+_fix_stdout_encoding()
 
 
 def _load_dotenv(path: str = ".env") -> None:

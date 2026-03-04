@@ -41,23 +41,23 @@ class TestSubscribeCommands(unittest.TestCase):
 
     def test_subscribe(self):
         reply = handle_command("/subscribe", group_id=5000)
-        self.assertIn("Subscribed", reply)
+        self.assertIn("\u5df2\u8ba2\u9605", reply)  # "已订阅"
         self.assertTrue(self._storage.is_subscribed(5000))
 
     def test_subscribe_duplicate(self):
         handle_command("/subscribe", group_id=5000)
         reply = handle_command("/subscribe", group_id=5000)
-        self.assertIn("already subscribed", reply)
+        self.assertIn("\u5df2\u7ecf\u8ba2\u9605", reply)  # "已经订阅"
 
     def test_unsubscribe(self):
         handle_command("/subscribe", group_id=6000)
         reply = handle_command("/unsubscribe", group_id=6000)
-        self.assertIn("Unsubscribed", reply)
+        self.assertIn("\u53d6\u6d88\u8ba2\u9605", reply)  # "取消订阅"
         self.assertFalse(self._storage.is_subscribed(6000))
 
     def test_unsubscribe_not_subscribed(self):
         reply = handle_command("/unsubscribe", group_id=7000)
-        self.assertIn("not subscribed", reply)
+        self.assertIn("\u672a\u8ba2\u9605", reply)  # "未订阅"
 
 
 class TestRateLimiter(unittest.TestCase):
