@@ -34,6 +34,7 @@ class OneBotWS:
         )
         self.on_message = on_message
         self._sock: Optional[socket.socket] = None
+        self._buf = bytearray()  # read buffer for leftover bytes
         self._running = False
 
     # -- public API -----------------------------------------------------------
@@ -86,6 +87,7 @@ class OneBotWS:
             ctx = ssl.create_default_context()
             raw = ctx.wrap_socket(raw, server_hostname=host)
         self._sock = raw
+        self._buf.clear()
 
         ws_key = base64.b64encode(secrets.token_bytes(16)).decode()
         headers = (
@@ -102,17 +104,26 @@ class OneBotWS:
 
         self._sock.sendall(headers.encode())
 
+        # Read HTTP upgrade response
         resp = b""
         while b"\r\n\r\n" not in resp:
             chunk = self._sock.recv(4096)
             if not chunk:
                 raise ConnectionError("connection closed during handshake")
             resp += chunk
+
         status_line = resp.split(b"\r\n")[0].decode()
         if "101" not in status_line:
             raise ConnectionError(f"handshake failed: {status_line}")
-        # Switch to blocking mode for the read loop; handshake used a
-        # short timeout but we need to wait for heartbeats (30s+).
+
+        # Preserve any bytes received after the HTTP headers -- these are
+        # the start of the first WebSocket frame.
+        header_end = resp.index(b"\r\n\r\n") + 4
+        leftover = resp[header_end:]
+        if leftover:
+            self._buf.extend(leftover)
+
+        # Switch to blocking mode for the read loop.
         self._sock.settimeout(None)
         print(f"[ws] connected to {self.url}")
 
@@ -181,14 +192,28 @@ class OneBotWS:
         self._send_frame(0x1, data)
 
     def _recv_exact(self, n: int) -> bytes:
-        buf = bytearray()
+        """Read exactly n bytes, draining internal buffer first."""
+        # Serve from buffer if we have enough
+        if len(self._buf) >= n:
+            result = bytes(self._buf[:n])
+            del self._buf[:n]
+            return result
+
+        # Drain buffer then read from socket
+        buf = bytearray(self._buf)
+        self._buf.clear()
         while len(buf) < n:
             if not self._sock:
                 raise ConnectionError("socket closed")
-            chunk = self._sock.recv(n - len(buf))
+            chunk = self._sock.recv(max(4096, n - len(buf)))
             if not chunk:
                 raise ConnectionError("connection lost")
             buf.extend(chunk)
+
+        # If we read too much, save the extra
+        if len(buf) > n:
+            self._buf.extend(buf[n:])
+            return bytes(buf[:n])
         return bytes(buf)
 
     def _close_sock(self) -> None:
@@ -198,3 +223,4 @@ class OneBotWS:
             except OSError:
                 pass
             self._sock = None
+        self._buf.clear()
