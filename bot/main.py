@@ -36,7 +36,10 @@ def main() -> None:
         sys.exit(1)
 
     if args.dry_run and args.news:
-        print("[dry-run] news fetch placeholder -- not yet implemented")
+        from bot.news_fetcher import fetch_all, format_news
+        print("[dry-run] fetching news ...")
+        items = fetch_all()
+        print(format_news(items))
         return
 
     if args.connect:
