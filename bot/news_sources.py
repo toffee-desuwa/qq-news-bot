@@ -1,9 +1,20 @@
-"""RSS feed source definitions."""
+"""RSS feed source definitions.
 
-# Each source: (name, url)
-# Kept small for v0.1. Add more as needed.
+Each source is (display_name, url, per_source_cap).
+per_source_cap limits how many items we take from each feed before merging.
+"""
+
+# 8-12 stable feeds covering tech, general news, and Chinese sources.
+# Per-source cap keeps any single feed from dominating the digest.
 DEFAULT_SOURCES = [
-    ("Hacker News", "https://hnrss.org/newest?count=10"),
-    ("Solidot", "https://www.solidot.org/index.rss"),
-    ("ChinaDaily", "https://www.chinadaily.com.cn/rss/china_rss.xml"),
+    ("Hacker News",   "https://hnrss.org/newest?count=10",                          3),
+    ("Solidot",       "https://www.solidot.org/index.rss",                           2),
+    ("ChinaDaily",    "https://www.chinadaily.com.cn/rss/china_rss.xml",             2),
+    ("36Kr",          "https://36kr.com/feed",                                       2),
+    ("IT Home",       "https://www.ithome.com/rss/",                                 2),
+    ("Zhihu Daily",   "https://rss.mifaw.com/articles/5c8bb11a3c41f61efd36683e/5c91d2e23c41f61efd3c69a7", 2),
+    ("Reuters",       "https://feeds.reuters.com/reuters/topNews",                   2),
+    ("BBC News",      "https://feeds.bbci.co.uk/news/rss.xml",                       2),
+    ("The Verge",     "https://www.theverge.com/rss/index.xml",                      2),
+    ("Ars Technica",  "https://feeds.arstechnica.com/arstechnica/index",             2),
 ]
