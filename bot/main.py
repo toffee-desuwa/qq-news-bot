@@ -43,8 +43,34 @@ def main() -> None:
         return
 
     if args.connect:
-        print("[connect] OneBot WS client -- not yet implemented")
-        sys.exit(1)
+        _run_connect()
 
     # dry-run without --news: just confirm startup
     print("[dry-run] bot started (no action requested)")
+
+
+def _run_connect() -> None:
+    from bot.onebot_ws import OneBotWS
+    from bot.commands import handle_command
+
+    def on_message(msg: dict) -> None:
+        # Only handle group messages
+        if msg.get("post_type") != "message":
+            return
+        if msg.get("message_type") != "group":
+            return
+        raw_text = msg.get("raw_message", "") or msg.get("message", "")
+        group_id = msg.get("group_id", 0)
+        if not raw_text or not group_id:
+            return
+        reply = handle_command(raw_text, group_id)
+        if reply:
+            ws.send_group_msg(group_id, reply)
+
+    ws = OneBotWS(on_message=on_message)
+    print(f"[connect] starting bot, target: {ws.url}")
+    try:
+        ws.run_forever()
+    except KeyboardInterrupt:
+        print("\n[connect] shutting down")
+        ws.stop()
