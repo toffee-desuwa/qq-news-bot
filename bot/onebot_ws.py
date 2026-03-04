@@ -82,6 +82,11 @@ class OneBotWS:
         port = parsed.port or (443 if use_ssl else 80)
         path = parsed.path or "/"
 
+        # Pass token as query parameter (NapCat prefers this over header).
+        if self.access_token:
+            sep = "&" if "?" in path else "?"
+            path = f"{path}{sep}access_token={self.access_token}"
+
         raw = socket.create_connection((host, port), timeout=10)
         if use_ssl:
             ctx = ssl.create_default_context()
