@@ -54,10 +54,16 @@ class TestFormatAlert(unittest.TestCase):
         item = NewsItem("Breaking News Title", "https://example.com/1", "Reuters")
         text = format_alert(item, "breaking")
         self.assertIn("突发快讯", text)
-        self.assertIn("【Reuters】", text)
+        self.assertIn("【路透社】", text)  # Chinese display name
+        self.assertNotIn("【Reuters】", text)
         self.assertIn("Breaking News Title", text)
         self.assertIn("https://example.com/1", text)
         self.assertIn("breaking", text)
+
+    def test_format_unknown_source_unchanged(self):
+        item = NewsItem("Title", "https://example.com/2", "UnknownFeed")
+        text = format_alert(item, "test")
+        self.assertIn("【UnknownFeed】", text)
 
 
 class TestFormatOverflow(unittest.TestCase):

@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from typing import List
 
-from bot.news_sources import DEFAULT_SOURCES
+from bot.news_sources import DEFAULT_SOURCES, display_name
 from bot.skills_loader import get_text
 
 # Atom namespace
@@ -114,7 +114,7 @@ def format_news(items: List[NewsItem]) -> str:
     now = datetime.now(tz_offset)
     time_str = now.strftime("%H:%M")
 
-    sources = sorted(set(item.source for item in items))
+    sources = sorted(set(display_name(item.source) for item in items))
     source_str = "\u3001".join(sources)
 
     lines = []
@@ -125,7 +125,7 @@ def format_news(items: List[NewsItem]) -> str:
     lines.append("")
 
     for i, item in enumerate(items, 1):
-        lines.append(f"{i}.\u3010{item.source}\u3011{item.title}")
+        lines.append(f"{i}.\u3010{display_name(item.source)}\u3011{item.title}")
         lines.append(f"   \U0001f517 {item.link}")
 
     lines.append("")

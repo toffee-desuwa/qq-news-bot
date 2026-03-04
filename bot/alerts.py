@@ -5,6 +5,7 @@ import os
 from typing import Dict, List, Optional, Tuple
 
 from bot.news_fetcher import NewsItem, fetch_all
+from bot.news_sources import display_name
 from bot.skills_loader import get_text
 from bot.storage import Storage
 
@@ -29,7 +30,7 @@ def format_alert(item: NewsItem, matched_keyword: str) -> str:
     kw_line = get_text("alert_keyword", keyword=matched_keyword)
     return (
         f"{header}\n"
-        f"\u3010{item.source}\u3011{item.title}\n"
+        f"\u3010{display_name(item.source)}\u3011{item.title}\n"
         f"\U0001f517 {item.link}\n"
         f"{kw_line}"
     )

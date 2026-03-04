@@ -18,3 +18,26 @@ DEFAULT_SOURCES = [
     ("The Verge",     "https://www.theverge.com/rss/index.xml",                      2),
     ("Ars Technica",  "https://feeds.arstechnica.com/arstechnica/index",             2),
 ]
+
+# Chinese-friendly display names for the output shell.
+# Used only at render time; NewsItem.source stays as-is for logic/storage.
+_DISPLAY_NAMES = {
+    "Hacker News":  "黑客新闻",
+    "ChinaDaily":   "中国日报",
+    "IT Home":      "IT之家",
+    "Zhihu Daily":  "知乎日报",
+    "Reuters":      "路透社",
+    "BBC News":     "BBC新闻",
+    "The Verge":    "The Verge",
+    "Ars Technica": "Ars Technica",
+    "Solidot":      "Solidot",
+    "36Kr":         "36氪",
+}
+
+
+def display_name(source: str) -> str:
+    """Return a Chinese-friendly display label for a source key.
+
+    Unknown sources are returned unchanged.
+    """
+    return _DISPLAY_NAMES.get(source, source)
