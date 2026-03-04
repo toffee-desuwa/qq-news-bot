@@ -1,0 +1,43 @@
+{
+    "help_header": "\ud83d\udc31 喵～主人，这是人家会的指令喵：",
+    "help_news": "/news \u2014 帮主人抓新闻喵～",
+    "help_subscribe": "/subscribe \u2014 开启每日新闻推送喵",
+    "help_unsubscribe": "/unsubscribe \u2014 关掉每日推送喵",
+    "help_sub": "/sub <关键词> \u2014 订阅快讯关键词喵",
+    "help_unsub": "/unsub <关键词> \u2014 取消关键词喵",
+    "help_subs": "/subs \u2014 看看本群订阅了啥喵",
+    "help_mute": "/mute <分钟> \u2014 让人家安静一会儿喵",
+    "help_unmute": "/unmute \u2014 人家又可以说话啦喵！",
+
+    "news_cooldown": "\u23f3 喵呜，冷却中，{secs}秒后再来找人家喵～",
+    "news_empty": "\ud83d\ude3f 喵…没抓到新闻，RSS 源可能不可用喵。",
+    "news_header": "\ud83d\udc31 主人～新鲜出炉的快讯来啦（{count}条）\uff5c更新：{time}（{tz}）\uff5c来源：{sources}",
+    "news_footer": "提示喵：标题保留原文；点链接看全文喵～",
+
+    "subscribe_ok": "\u2705 订阅成功喵！人家每天都会给主人推新闻的～",
+    "subscribe_dup": "\ud83d\ude38 主人，本群已经订阅过了喵～",
+    "unsubscribe_ok": "\ud83d\uded1 好的喵，不再推送了…人家会想主人的喵。",
+    "unsubscribe_none": "\ud83d\ude3f 喵？本群还没有订阅过喵。",
+
+    "sub_ok": "\u2705 喵！已订阅关键词「{keyword}」，有消息人家马上告诉主人喵～",
+    "sub_dup": "\ud83d\ude38 关键词「{keyword}」已经订阅过了喵～",
+    "sub_usage": "\ud83d\ude3f 喵？用法是 /sub <关键词> 喵～",
+    "unsub_ok": "\ud83d\uded1 已取消关键词「{keyword}」喵～",
+    "unsub_none": "\ud83d\ude3f 喵…没找到关键词「{keyword}」喵。",
+    "unsub_usage": "\ud83d\ude3f 喵？用法是 /unsub <关键词> 喵～",
+    "subs_empty": "\ud83d\udced 本群还没有订阅关键词喵。用 /sub <关键词> 添加喵～",
+    "subs_list": "\ud83d\udd14 主人～本群订阅了这些关键词喵（{count}个）：{keywords}",
+
+    "mute_ok": "\ud83d\udd07 好的喵，人家安静 {minutes} 分钟。/unmute 可以提前叫醒人家喵～",
+    "mute_usage": "\ud83d\ude3f 喵？用法是 /mute <分钟数> 喵～",
+    "mute_bad_arg": "\ud83d\ude3f 请给人家一个整数喵，比如 /mute 30",
+    "mute_negative": "\ud83d\ude3f 分钟数要是正整数喵！",
+    "unmute_ok": "\ud83d\udd0a 喵！人家又可以推送啦～主人有什么吩咐？",
+    "unmute_none": "\ud83d\ude38 喵？本群没有被静音喵～",
+
+    "alert_header": "\ud83d\udea8 喵！突发快讯来了喵！",
+    "alert_keyword": "\ud83d\udd0d 匹配关键词：{keyword} 喵",
+    "alert_overflow": "... 还有 {count} 条快讯被省略了喵（频率限制喵）",
+
+    "digest_prefix": "\ud83d\udc31 [每日新闻喵]"
+}

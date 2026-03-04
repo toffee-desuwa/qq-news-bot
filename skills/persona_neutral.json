@@ -1,0 +1,43 @@
+{
+    "help_header": "\ud83e\udd16 qq-news-bot 指令：",
+    "help_news": "/news \u2014 获取最新新闻",
+    "help_subscribe": "/subscribe \u2014 开启每日推送",
+    "help_unsubscribe": "/unsubscribe \u2014 关闭每日推送",
+    "help_sub": "/sub <关键词> \u2014 订阅突发快讯关键词",
+    "help_unsub": "/unsub <关键词> \u2014 取消关键词订阅",
+    "help_subs": "/subs \u2014 查看本群已订阅关键词",
+    "help_mute": "/mute <分钟> \u2014 暂停快讯推送",
+    "help_unmute": "/unmute \u2014 恢复快讯推送",
+
+    "news_cooldown": "\u23f3 冷却中，{secs}秒后再试。",
+    "news_empty": "暂无新闻，RSS 源可能不可用。",
+    "news_header": "\ud83d\udcf0 今日快讯（{count}条）\uff5c更新：{time}（{tz}）\uff5c来源：{sources}",
+    "news_footer": "提示：标题保留原文；点链接看全文。",
+
+    "subscribe_ok": "\u2705 已订阅，本群将收到每日新闻推送。",
+    "subscribe_dup": "\u2139\ufe0f 本群已经订阅过了。",
+    "unsubscribe_ok": "\ud83d\uded1 已取消订阅，不再推送每日新闻。",
+    "unsubscribe_none": "\u2139\ufe0f 本群未订阅。",
+
+    "sub_ok": "\u2705 已订阅关键词「{keyword}」，匹配时将推送快讯。",
+    "sub_dup": "\u2139\ufe0f 关键词「{keyword}」已订阅过了。",
+    "sub_usage": "\u26a0\ufe0f 用法：/sub <关键词>",
+    "unsub_ok": "\ud83d\uded1 已取消关键词「{keyword}」。",
+    "unsub_none": "\u2139\ufe0f 未找到关键词「{keyword}」。",
+    "unsub_usage": "\u26a0\ufe0f 用法：/unsub <关键词>",
+    "subs_empty": "\ud83d\udced 本群暂无订阅关键词。使用 /sub <关键词> 添加。",
+    "subs_list": "\ud83d\udd14 本群订阅关键词（{count}个）：{keywords}",
+
+    "mute_ok": "\ud83d\udd07 快讯已静音 {minutes} 分钟。使用 /unmute 可提前恢复。",
+    "mute_usage": "\u26a0\ufe0f 用法：/mute <分钟数>",
+    "mute_bad_arg": "\u26a0\ufe0f 请输入整数分钟数，例如 /mute 30",
+    "mute_negative": "\u26a0\ufe0f 分钟数需为正整数。",
+    "unmute_ok": "\ud83d\udd0a 快讯已恢复推送。",
+    "unmute_none": "\u2139\ufe0f 本群未处于静音状态。",
+
+    "alert_header": "\ud83d\udea8 突发快讯",
+    "alert_keyword": "\ud83d\udd0d 匹配关键词：{keyword}",
+    "alert_overflow": "... 还有 {count} 条相关快讯被省略（频率限制）。",
+
+    "digest_prefix": "[Daily Digest]"
+}

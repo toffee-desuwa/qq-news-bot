@@ -11,7 +11,8 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from typing import List
 
-from bot.news_sources import DEFAULT_SOURCES
+from bot.news_sources import DEFAULT_SOURCES, display_name
+from bot.skills_loader import get_text
 
 # Atom namespace
 _ATOM_NS = "http://www.w3.org/2005/Atom"
@@ -106,30 +107,29 @@ def format_news(items: List[NewsItem]) -> str:
     Footer: reminder that titles are in original language.
     """
     if not items:
-        return "暂无新闻，RSS 源可能不可用。"
+        return get_text("news_empty")
 
     tz_name = os.environ.get("TIMEZONE", "Asia/Shanghai")
     tz_offset = _tz_offset(tz_name)
     now = datetime.now(tz_offset)
     time_str = now.strftime("%H:%M")
 
-    sources = sorted(set(item.source for item in items))
-    source_str = "、".join(sources)
+    sources = sorted(set(display_name(item.source) for item in items))
+    source_str = "\u3001".join(sources)
 
     lines = []
-    lines.append(
-        f"\U0001f4f0 今日快讯（{len(items)}条）"
-        f"\uff5c更新：{time_str}（{tz_name}）"
-        f"\uff5c来源：{source_str}"
-    )
+    lines.append(get_text(
+        "news_header",
+        count=len(items), time=time_str, tz=tz_name, sources=source_str,
+    ))
     lines.append("")
 
     for i, item in enumerate(items, 1):
-        lines.append(f"{i}.\u3010{item.source}\u3011{item.title}")
+        lines.append(f"{i}.\u3010{display_name(item.source)}\u3011{item.title}")
         lines.append(f"   \U0001f517 {item.link}")
 
     lines.append("")
-    lines.append("提示：标题保留原文；点链接看全文。")
+    lines.append(get_text("news_footer"))
 
     return "\n".join(lines)
 

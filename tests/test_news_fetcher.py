@@ -3,6 +3,7 @@
 import unittest
 
 from bot.news_fetcher import NewsItem, parse_feed_xml, format_news, fetch_all
+from bot.news_sources import display_name
 
 RSS_SAMPLE = """\
 <?xml version="1.0" encoding="UTF-8"?>
@@ -79,6 +80,24 @@ class TestFormatNews(unittest.TestCase):
     def test_format_empty(self):
         text = format_news([])
         self.assertIn("\u6682\u65e0\u65b0\u95fb", text)  # "暂无新闻"
+
+
+class TestDisplayName(unittest.TestCase):
+    def test_known_source_mapped(self):
+        self.assertEqual(display_name("Hacker News"), "\u9ed1\u5ba2\u65b0\u95fb")
+        self.assertEqual(display_name("ChinaDaily"), "\u4e2d\u56fd\u65e5\u62a5")
+        self.assertEqual(display_name("IT Home"), "IT\u4e4b\u5bb6")
+
+    def test_unknown_source_unchanged(self):
+        self.assertEqual(display_name("UnknownFeed"), "UnknownFeed")
+
+    def test_format_news_uses_chinese_source(self):
+        items = [
+            NewsItem("Some Title", "https://example.com/1", "Hacker News"),
+        ]
+        text = format_news(items)
+        self.assertIn("\u3010\u9ed1\u5ba2\u65b0\u95fb\u3011", text)  # 【黑客新闻】
+        self.assertNotIn("\u3010Hacker News\u3011", text)
 
 
 class TestDedupe(unittest.TestCase):
