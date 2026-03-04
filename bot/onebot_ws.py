@@ -111,6 +111,9 @@ class OneBotWS:
         status_line = resp.split(b"\r\n")[0].decode()
         if "101" not in status_line:
             raise ConnectionError(f"handshake failed: {status_line}")
+        # Switch to blocking mode for the read loop; handshake used a
+        # short timeout but we need to wait for heartbeats (30s+).
+        self._sock.settimeout(None)
         print(f"[ws] connected to {self.url}")
 
     # -- frame read/write (minimal RFC 6455) ----------------------------------
