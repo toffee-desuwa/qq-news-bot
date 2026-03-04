@@ -60,6 +60,13 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Fetch and print news to stdout (useful with --dry-run).",
     )
+    parser.add_argument(
+        "--alerts",
+        metavar="KEYWORD",
+        type=str,
+        default=None,
+        help="Simulate alert matching for KEYWORD (useful with --dry-run).",
+    )
     return parser
 
 
@@ -79,6 +86,10 @@ def main() -> None:
         print(format_news(items))
         return
 
+    if args.dry_run and args.alerts:
+        _run_dry_alerts(args.alerts)
+        return
+
     if args.connect:
         _run_connect()
         return
@@ -87,11 +98,38 @@ def main() -> None:
     print("[dry-run] bot started (no action requested)")
 
 
+def _run_dry_alerts(keyword: str) -> None:
+    """Simulate one alert poll cycle with a temporary subscription."""
+    import tempfile
+    from bot.alerts import process_alerts, keyword_match, format_alert, link_hash
+    from bot.news_fetcher import fetch_all
+    from bot.storage import Storage
+
+    print(f"[dry-run] simulating alerts for keyword: {keyword}")
+    print("[dry-run] fetching feeds ...")
+    items = fetch_all(max_items=50)
+    print(f"[dry-run] fetched {len(items)} items, matching against \"{keyword}\" ...\n")
+
+    matched = 0
+    for item in items:
+        kw = keyword_match(item.title, [keyword.lower()])
+        if kw is not None:
+            print(format_alert(item, kw))
+            print()
+            matched += 1
+
+    if matched == 0:
+        print(f"[dry-run] no items matched keyword \"{keyword}\".")
+    else:
+        print(f"[dry-run] {matched} item(s) matched.")
+
+
 def _run_connect() -> None:
     from bot.onebot_ws import OneBotWS
     from bot.commands import handle_command, get_storage
     from bot.news_fetcher import fetch_all, format_news
     from bot.scheduler import Scheduler
+    from bot.alert_poller import AlertPoller
 
     def on_message(msg: dict) -> None:
         if msg.get("post_type") != "message":
@@ -116,10 +154,14 @@ def _run_connect() -> None:
     )
     scheduler.start()
 
+    poller = AlertPoller(storage=storage, send_fn=ws.send_group_msg)
+    poller.start()
+
     print(f"[connect] starting bot, target: {ws.url}")
     try:
         ws.run_forever()
     except KeyboardInterrupt:
         print("\n[connect] shutting down")
+        poller.stop()
         scheduler.stop()
         ws.stop()
