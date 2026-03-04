@@ -10,6 +10,8 @@ import time
 from datetime import datetime, timedelta, timezone, tzinfo
 from typing import Callable, Optional
 
+from bot.skills_loader import get_text
+
 
 def _parse_offset(tz_name: str) -> Optional[tzinfo]:
     """Convert a timezone name to a fixed UTC offset.
@@ -100,7 +102,8 @@ class Scheduler:
         news_text = self._get_news()
         for gid in groups:
             try:
-                self._send(gid, f"[Daily Digest]\n{news_text}")
+                prefix = get_text("digest_prefix")
+                self._send(gid, f"{prefix}\n{news_text}")
             except Exception as exc:
                 print(f"[scheduler] failed to send to {gid}: {exc}")
         print(f"[scheduler] digest sent to {len(groups)} group(s)")

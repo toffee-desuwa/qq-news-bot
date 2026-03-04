@@ -5,6 +5,7 @@ import os
 from typing import Dict, List, Optional, Tuple
 
 from bot.news_fetcher import NewsItem, fetch_all
+from bot.skills_loader import get_text
 from bot.storage import Storage
 
 
@@ -24,17 +25,19 @@ def link_hash(link: str) -> str:
 
 def format_alert(item: NewsItem, matched_keyword: str) -> str:
     """Format a single alert message (Chinese shell + original title)."""
+    header = get_text("alert_header")
+    kw_line = get_text("alert_keyword", keyword=matched_keyword)
     return (
-        f"\U0001f6a8 突发快讯\n"
+        f"{header}\n"
         f"\u3010{item.source}\u3011{item.title}\n"
         f"\U0001f517 {item.link}\n"
-        f"\U0001f50d 匹配关键词：{matched_keyword}"
+        f"{kw_line}"
     )
 
 
 def format_overflow(count: int) -> str:
     """Format the 'and N more' summary when rate limit is hit."""
-    return f"... 还有 {count} 条相关快讯被省略（频率限制）。"
+    return get_text("alert_overflow", count=count)
 
 
 def process_alerts(

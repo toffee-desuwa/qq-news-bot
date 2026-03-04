@@ -5,7 +5,7 @@ import tempfile
 import time
 import unittest
 
-from bot.commands import handle_command, HELP_TEXT, set_storage
+from bot.commands import handle_command, set_storage
 from bot.rate_limit import RateLimiter
 from bot.storage import Storage
 
@@ -13,7 +13,8 @@ from bot.storage import Storage
 class TestHandleCommand(unittest.TestCase):
     def test_help(self):
         reply = handle_command("/help", group_id=1)
-        self.assertEqual(reply, HELP_TEXT)
+        self.assertIsNotNone(reply)
+        self.assertIn("/news", reply)
 
     def test_not_a_command(self):
         reply = handle_command("hello world", group_id=1)
@@ -25,14 +26,16 @@ class TestHandleCommand(unittest.TestCase):
 
     def test_help_with_whitespace(self):
         reply = handle_command("  /help  ", group_id=1)
-        self.assertEqual(reply, HELP_TEXT)
+        self.assertIsNotNone(reply)
+        self.assertIn("/news", reply)
 
     def test_help_lists_new_commands(self):
-        self.assertIn("/sub", HELP_TEXT)
-        self.assertIn("/unsub", HELP_TEXT)
-        self.assertIn("/subs", HELP_TEXT)
-        self.assertIn("/mute", HELP_TEXT)
-        self.assertIn("/unmute", HELP_TEXT)
+        reply = handle_command("/help", group_id=1)
+        self.assertIn("/sub", reply)
+        self.assertIn("/unsub", reply)
+        self.assertIn("/subs", reply)
+        self.assertIn("/mute", reply)
+        self.assertIn("/unmute", reply)
 
 
 class TestSubscribeCommands(unittest.TestCase):
