@@ -1,7 +1,28 @@
 """CLI entry point and top-level orchestration."""
 
 import argparse
+import os
 import sys
+
+
+def _load_dotenv(path: str = ".env") -> None:
+    """Load key=value pairs from a .env file into os.environ (stdlib only).
+
+    Skips blank lines and comments. Does not override existing env vars.
+    """
+    try:
+        with open(path, encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                key, _, value = line.partition("=")
+                key = key.strip()
+                value = value.strip()
+                if key and key not in os.environ:
+                    os.environ[key] = value
+    except FileNotFoundError:
+        pass
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -28,6 +49,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main() -> None:
+    _load_dotenv()
     parser = build_parser()
     args = parser.parse_args()
 
