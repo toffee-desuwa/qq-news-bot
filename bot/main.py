@@ -44,6 +44,7 @@ def main() -> None:
 
     if args.connect:
         _run_connect()
+        return
 
     # dry-run without --news: just confirm startup
     print("[dry-run] bot started (no action requested)")
@@ -51,10 +52,11 @@ def main() -> None:
 
 def _run_connect() -> None:
     from bot.onebot_ws import OneBotWS
-    from bot.commands import handle_command
+    from bot.commands import handle_command, get_storage
+    from bot.news_fetcher import fetch_all, format_news
+    from bot.scheduler import Scheduler
 
     def on_message(msg: dict) -> None:
-        # Only handle group messages
         if msg.get("post_type") != "message":
             return
         if msg.get("message_type") != "group":
@@ -68,9 +70,19 @@ def _run_connect() -> None:
             ws.send_group_msg(group_id, reply)
 
     ws = OneBotWS(on_message=on_message)
+    storage = get_storage()
+
+    scheduler = Scheduler(
+        send_fn=ws.send_group_msg,
+        get_groups_fn=storage.list_subscribed,
+        get_news_fn=lambda: format_news(fetch_all()),
+    )
+    scheduler.start()
+
     print(f"[connect] starting bot, target: {ws.url}")
     try:
         ws.run_forever()
     except KeyboardInterrupt:
         print("\n[connect] shutting down")
+        scheduler.stop()
         ws.stop()

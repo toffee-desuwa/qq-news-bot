@@ -4,9 +4,26 @@ from typing import Optional
 
 from bot.news_fetcher import fetch_all, format_news
 from bot.rate_limit import RateLimiter
+from bot.storage import Storage
 
 # Shared rate limiter for /news (60s cooldown per group)
 _news_limiter = RateLimiter(cooldown_seconds=60)
+
+# Module-level storage instance, initialized lazily
+_storage: Optional[Storage] = None
+
+
+def get_storage() -> Storage:
+    global _storage
+    if _storage is None:
+        _storage = Storage()
+    return _storage
+
+
+def set_storage(storage: Storage) -> None:
+    """Inject a storage instance (useful for testing)."""
+    global _storage
+    _storage = storage
 
 HELP_TEXT = (
     "qq-news-bot commands:\n"
@@ -50,10 +67,14 @@ def _handle_news(group_id: int) -> str:
 
 
 def _handle_subscribe(group_id: int) -> str:
-    # Placeholder -- storage wiring in Commit 5
-    return "subscribe: not yet implemented"
+    store = get_storage()
+    if store.subscribe(group_id):
+        return "Subscribed. This group will receive daily news digests."
+    return "This group is already subscribed."
 
 
 def _handle_unsubscribe(group_id: int) -> str:
-    # Placeholder -- storage wiring in Commit 5
-    return "unsubscribe: not yet implemented"
+    store = get_storage()
+    if store.unsubscribe(group_id):
+        return "Unsubscribed. Daily digest disabled for this group."
+    return "This group is not subscribed."

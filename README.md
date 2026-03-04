@@ -24,7 +24,43 @@ v0.1.0 -- MVP, local-first, stdlib-only.
 
 ## Quickstart
 
-_TODO: fill in after implementation is complete._
+### 1. Test the news pipeline (no OneBot needed)
+
+```bash
+python -m bot --dry-run --news
+```
+
+This fetches live RSS feeds and prints formatted news to stdout.
+
+### 2. Run tests
+
+```bash
+python -m unittest -q
+```
+
+### 3. Connect to OneBot
+
+Make sure NapCat (or another OneBot v11 implementation) is running with
+WebSocket enabled.
+
+```bash
+cp .env.example .env
+# Edit .env -- set ONEBOT_WS_URL to your NapCat WS endpoint
+python -m bot --connect
+```
+
+The bot connects via WebSocket, listens for group messages, and responds
+to `/help`, `/news`, `/subscribe`, and `/unsubscribe`. A background
+scheduler pushes daily digests to subscribed groups at the configured time.
+
+### 4. CLI reference
+
+```
+python -m bot --help          # show usage
+python -m bot --dry-run       # start without OneBot (no-op)
+python -m bot --dry-run --news  # fetch + print news
+python -m bot --connect       # connect to OneBot and run
+```
 
 ## Configuration
 
