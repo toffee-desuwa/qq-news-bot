@@ -22,10 +22,13 @@ jobs:
         run: python -m compileall bot/ tests/
 
       - name: Unit tests
-        run: python -m unittest -q
+        env:
+          PYTHONPATH: "."
+          PERSONA: neutral
+        run: python -m unittest discover -s tests -q
 
-      - name: Smoke — dry-run news
+      - name: Smoke - dry-run news
         run: python -m bot --dry-run --news
 
-      - name: Smoke — dry-run alerts
+      - name: Smoke - dry-run alerts
         run: python -m bot --dry-run --alerts "AI"
