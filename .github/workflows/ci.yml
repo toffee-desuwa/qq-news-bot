@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Compile check
+        run: python -m compileall bot/ tests/
+
+      - name: Unit tests
+        env:
+          PYTHONPATH: "."
+          PERSONA: neutral
+        run: python -m unittest discover -s tests -q
+
+      - name: Smoke - dry-run news
+        run: python -m bot --dry-run --news
+
+      - name: Smoke - dry-run alerts
+        run: python -m bot --dry-run --alerts "AI"
